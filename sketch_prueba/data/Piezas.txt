@@ -1,0 +1,15 @@
+Fiduciales de piezas negras
+0 - Rey
+1 - Reyna
+2-3 - Alfil
+4-5 - Caballo
+6-7 - Torre
+8-15 - Peones 
+
+Fiduciales de piezas blancas
+16 - Rey
+17 - Reyna
+18-19 - Alfil
+20-21 - Caballo
+22-23 - Torre
+24-32 - Peones
