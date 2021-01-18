@@ -19,49 +19,96 @@ Pieza Reyna_B;
 Pieza Rey_N;
 Pieza Rey_B;
 
-//Declaramos el tiempo de los jugadores;
-  boolean partidaActiva = false;
   int Nx;
   int Ny;
   int Bx;
   int By;
+  int x;
+  int y;
+  
+  Cuadrante cI;
+  Cuadrante cF;
+  
+  String Movimiento_N[] = new String[1000];
+  String Movimiento_B[] = new String[1000];
+  int coN = 0;
+  int coB = 0;
+  int q = 0;
+  
+  String negro;
+  String blanco;
+  
+  String P;
+  String L;
+  String N;
+  String E;
 
-//Cargamos la posicion incial de todas las pieza
 
 void setup(){
   size(708, 704);
   createGraphics(708, 704);
   
+  
   tuio = new TuioProcessing(this);
   
   fondo = loadImage("tablero.jpg"); //Asignamos imagen al fondo
+  
+  acomodarTablero();
 }
 
 void draw(){
   background(fondo);
   
+  cargarPiezas();
   
-  
-  if(key == 'a' || key == 'A'){
-   partidaActiva = true;
-   cargarPiezas();
-  }
-  
+  if(keyPressed){
+    if(key == 'r'){
+      acomodarTablero();
+      P = null;
+      L = null;
+      N = null;
+      E = null;
+    }
+    if (key == CODED){
+      //Movimientos Blancos
+      if(keyCode == LEFT){
+        if(P != null){
+          blanco = P+E+L+N;
+          if(Movimiento_N[0] == null){
+            Movimiento_N[0] = blanco;
+            P = null;
+            println("Se agrego a la primera posicion: "+ blanco);
+          }else{
+            println("Comparamos: " + blanco +" == "+ Movimiento_N[coN]);
+            if(blanco == Movimiento_N[coN]){
+              println("Son iguales");
+              P = null;
+            }else{
+              Movimiento_N[coN+1] = blanco;
+              coN = coN +1;
+              println("Se agrego en la posicion " + coN +": "+ blanco);
+              P = null;
+            }
+          }
+      }
+    }
+      //Movimientos Negros
+      
+    }
+  } 
 }
 
-
-void cargarPiezas(){
-  if(partidaActiva){
+void acomodarTablero(){
     Nx = 55;
     Ny = 145;
     Bx = 55;
     By = 565;
     //peones
     for(int i=0; i<8; i++){
-      Peones_N[i] = new Pieza("Peon", loadImage("peon_N.png"), Nx, Ny, 0, 0);
-      Peones_B[i] = new Pieza("Peon", loadImage("peon_B.png"), Bx, By, 0, 0);
-      image(Peones_N[i].getImagen(), Peones_N[i].getPosicion_x()-40, Peones_N[i].getPosicion_y()-40, 80,80);
-      image(Peones_B[i].getImagen(), Peones_B[i].getPosicion_x()-40, Peones_B[i].getPosicion_y()-40, 80,80);
+      Peones_N[i] = new Pieza("Peon", loadImage("peon_N.png"), Nx, Ny);
+      Peones_B[i] = new Pieza("Peon", loadImage("peon_B.png"), Bx, By);
+      Peones_N[i].setCuadrante(BuscarCuadrante(Peones_N[i]));
+      Peones_B[i].setCuadrante(BuscarCuadrante(Peones_B[i]));
       Nx += 85;
       Bx += 85;
     }
@@ -71,10 +118,10 @@ void cargarPiezas(){
     By = 650;
     //torres
     for(int i=0; i<2; i++){
-      Torres_N[i] = new Pieza("Torre", loadImage("torre_N.png"), Nx, Ny, 0, 0);
-      Torres_B[i] = new Pieza("Torre", loadImage("torre_B.png"), Bx, By, 0, 0);
-      image(Torres_N[i].getImagen(), Torres_N[i].getPosicion_x()-40, Torres_N[i].getPosicion_y()-40, 80,80);
-      image(Torres_B[i].getImagen(), Torres_B[i].getPosicion_x()-40, Torres_B[i].getPosicion_y()-40, 80,80);
+      Torres_N[i] = new Pieza("Torre", loadImage("torre_N.png"), Nx, Ny);
+      Torres_B[i] = new Pieza("Torre", loadImage("torre_B.png"), Bx, By);
+      Torres_N[i].setCuadrante(BuscarCuadrante(Torres_N[i]));
+      Torres_B[i].setCuadrante(BuscarCuadrante(Torres_B[i]));
       Nx += 595;
       Bx += 595;
     }
@@ -84,10 +131,10 @@ void cargarPiezas(){
     By = 650;
     //Caballos
     for(int i=0; i<2; i++){
-      Caballos_N[i] = new Pieza("Caballo", loadImage("caballo_N.png"), Nx, Ny, 0, 0);
-      Caballos_B[i] = new Pieza("Caballo", loadImage("caballo_B.png"), Bx, By, 0, 0);
-      image(Caballos_N[i].getImagen(), Caballos_N[i].getPosicion_x()-40, Caballos_N[i].getPosicion_y()-40, 80,80);
-      image(Caballos_B[i].getImagen(), Caballos_B[i].getPosicion_x()-40, Caballos_B[i].getPosicion_y()-40, 80,80);
+      Caballos_N[i] = new Pieza("Caballo", loadImage("caballo_N.png"), Nx, Ny);
+      Caballos_B[i] = new Pieza("Caballo", loadImage("caballo_B.png"), Bx, By);
+      Caballos_N[i].setCuadrante(BuscarCuadrante(Caballos_N[i]));
+      Caballos_B[i].setCuadrante(BuscarCuadrante(Caballos_B[i]));
       Nx += 425;
       Bx += 425;
     }
@@ -97,10 +144,10 @@ void cargarPiezas(){
     By = 650;
     //Alfiles
     for(int i=0; i<2; i++){
-      Alfiles_N[i] = new Pieza("Alfil", loadImage("alfil_N.png"), Nx, Ny, 0, 0);
-      Alfiles_B[i] = new Pieza("Alfil", loadImage("alfil_B.png"), Bx, By, 0, 0);
-      image(Alfiles_N[i].getImagen(), Alfiles_N[i].getPosicion_x()-40, Alfiles_N[i].getPosicion_y()-40, 80,80);
-      image(Alfiles_B[i].getImagen(), Alfiles_B[i].getPosicion_x()-40, Alfiles_B[i].getPosicion_y()-40, 80,80);
+      Alfiles_N[i] = new Pieza("Alfil", loadImage("alfil_N.png"), Nx, Ny);
+      Alfiles_B[i] = new Pieza("Alfil", loadImage("alfil_B.png"), Bx, By);
+      Alfiles_N[i].setCuadrante(BuscarCuadrante(Alfiles_N[i]));
+      Alfiles_B[i].setCuadrante(BuscarCuadrante(Alfiles_B[i]));
       Nx += 255;
       Bx += 255;
     }
@@ -109,50 +156,105 @@ void cargarPiezas(){
     Bx = 310;
     By = 650;
     //Reynas
-    Reyna_N = new Pieza("Reyna", loadImage("reyna_N.png"), Nx, Ny, 0, 0);
-    Reyna_B = new Pieza("Reyna", loadImage("reyna_B.png"), Bx, By, 0, 0);
-    image(Reyna_N.getImagen(), Reyna_N.getPosicion_x()-40, Reyna_N.getPosicion_y()-40, 80,80);
-    image(Reyna_B.getImagen(), Reyna_B.getPosicion_x()-40, Reyna_B.getPosicion_y()-40, 80,80);
+    Reyna_N = new Pieza("Reyna", loadImage("reyna_N.png"), Nx, Ny);
+    Reyna_B = new Pieza("Reyna", loadImage("reyna_B.png"), Bx, By);
+    Reyna_N.setCuadrante(BuscarCuadrante(Reyna_N));
+    Reyna_B.setCuadrante(BuscarCuadrante(Reyna_B));
     
     Nx = 395;
     Ny = 55;
     Bx = 395;
     By = 650;
     //Reyes
-    Rey_N = new Pieza("Rey", loadImage("rey_N.png"), Nx, Ny, 0, 0);
-    Rey_B = new Pieza("Rey", loadImage("rey_B.png"), Bx, By, 0, 0);  
+    Rey_N = new Pieza("Rey", loadImage("rey_N.png"), Nx, Ny);
+    Rey_B = new Pieza("Rey", loadImage("rey_B.png"), Bx, By);
+    Rey_N.setCuadrante(BuscarCuadrante(Rey_N));
+    Rey_B.setCuadrante(BuscarCuadrante(Rey_B));
+    Nx = 0;
+    Ny = 0;
+    Bx = 0;
+    By = 0;
+}
+
+void cargarPiezas(){
+    //peones
+    for(int i=0; i<8; i++){
+      if(Peones_N[i].getPosicion_x() != 0 || Peones_N[i].getPosicion_y() != 0 ){
+      image(Peones_N[i].getImagen(), Peones_N[i].getPosicion_x()-40, Peones_N[i].getPosicion_y()-40, 80,80);
+      }
+      if(Peones_B[i].getPosicion_x() != 0 || Peones_B[i].getPosicion_y() != 0 ){
+      image(Peones_B[i].getImagen(), Peones_B[i].getPosicion_x()-40, Peones_B[i].getPosicion_y()-40, 80,80);
+      }
+    }
+    //torres
+    for(int i=0; i<2; i++){
+      if(Torres_N[i].getPosicion_x() != 0 || Torres_N[i].getPosicion_y() !=0) {
+      image(Torres_N[i].getImagen(), Torres_N[i].getPosicion_x()-40, Torres_N[i].getPosicion_y()-40, 80,80);
+      }
+      if(Torres_B[i].getPosicion_x() != 0 || Torres_B[i].getPosicion_y() !=0) {
+      image(Torres_B[i].getImagen(), Torres_B[i].getPosicion_x()-40, Torres_B[i].getPosicion_y()-40, 80,80);
+      }
+    }
+    //Caballos
+    for(int i=0; i<2; i++){
+      if(Caballos_N[i].getPosicion_x() != 0 || Caballos_N[i].getPosicion_y() !=0) {
+      image(Caballos_N[i].getImagen(), Caballos_N[i].getPosicion_x()-40, Caballos_N[i].getPosicion_y()-40, 80,80);
+      }
+      if(Caballos_B[i].getPosicion_x() != 0 || Caballos_B[i].getPosicion_y() !=0) {
+      image(Caballos_B[i].getImagen(), Caballos_B[i].getPosicion_x()-40, Caballos_B[i].getPosicion_y()-40, 80,80);
+      }
+    }
+    //Alfiles
+    for(int i=0; i<2; i++){
+      if(Alfiles_N[i].getPosicion_x() != 0 || Alfiles_N[i].getPosicion_y() !=0) {
+      image(Alfiles_N[i].getImagen(), Alfiles_N[i].getPosicion_x()-40, Alfiles_N[i].getPosicion_y()-40, 80,80);
+      }
+      if(Alfiles_B[i].getPosicion_x() != 0 || Alfiles_B[i].getPosicion_y() !=0) {
+      image(Alfiles_B[i].getImagen(), Alfiles_B[i].getPosicion_x()-40, Alfiles_B[i].getPosicion_y()-40, 80,80);
+      }
+    }
+    //Reynas
+    if(Reyna_N.getPosicion_x() != 0 || Reyna_N.getPosicion_y() !=0) {
+    image(Reyna_N.getImagen(), Reyna_N.getPosicion_x()-40, Reyna_N.getPosicion_y()-40, 80,80);
+    }
+    if(Reyna_B.getPosicion_x() != 0 || Reyna_B.getPosicion_y() !=0) {
+    image(Reyna_B.getImagen(), Reyna_B.getPosicion_x()-40, Reyna_B.getPosicion_y()-40, 80,80);
+    }
+    //Reyes
+    if(Rey_N.getPosicion_x() != 0 || Rey_N.getPosicion_y() !=0) {
     image(Rey_N.getImagen(), Rey_N.getPosicion_x()-40, Rey_N.getPosicion_y()-40, 80,80);
+    }
+    if(Rey_B.getPosicion_x() != 0 || Rey_B.getPosicion_y() !=0) {
     image(Rey_B.getImagen(), Rey_B.getPosicion_x()-40, Rey_B.getPosicion_y()-40, 80,80);
-    partidaActiva = false;
-  }
+    }
 }
 /////////////////////////////////////
 
 Cuadrante BuscarCuadrante(Pieza pieza){
   Cuadrante cuadrante = new Cuadrante();
   if(pieza.getPosicion_x() <= 95){
-    cuadrante.setLetra("A");
+    cuadrante.setLetra("a");
   }else{
     if(pieza.getPosicion_x() <= 180){
-    cuadrante.setLetra("B");
+    cuadrante.setLetra("b");
     }else{
       if(pieza.getPosicion_x() <= 275){
-        cuadrante.setLetra("C");
+        cuadrante.setLetra("c");
       }else{
         if(pieza.getPosicion_x() <= 355){
-          cuadrante.setLetra("D");
+          cuadrante.setLetra("d");
         }else{
           if(pieza.getPosicion_x() <= 440){
-            cuadrante.setLetra("E");
+            cuadrante.setLetra("e");
           }else{
             if(pieza.getPosicion_x() <= 525){
-              cuadrante.setLetra("F");
+              cuadrante.setLetra("f");
             }else{
               if(pieza.getPosicion_x() <= 610){
-                cuadrante.setLetra("G");
+                cuadrante.setLetra("g");
               }else{
                if(pieza.getPosicion_x() <= 696){
-                  cuadrante.setLetra("H");
+                  cuadrante.setLetra("h");
                 }
               }
             }
@@ -195,233 +297,734 @@ Cuadrante BuscarCuadrante(Pieza pieza){
   return cuadrante;
 }
 
+String leerFiducial(int f){
+  if(f < 32){
+    if(f == 0 || f == 16){
+      return "R";
+    }
+    if(f == 1 || f == 17){
+      return "D";
+    }
+    if(f == 2 || f == 3 || f == 18 || f == 19){
+      return "A";
+    }
+    if(f == 4 || f == 5 || f == 20 || f == 21){
+      return "C";
+    }
+    if(f == 6 || f == 7 || f == 22 || f == 23){
+      return "T";
+    }else{
+      return "";
+    }
+  }else{
+    println("No es una pieza del ajedrez");
+    return "-";
+  }
+}
+
 /////////////////////////////////////
 //Parte de Reactivision y fiduciales
 
 void addTuioObject(TuioObject objectTuio){
   int idObjeto = objectTuio.getSymbolID();
-  println("entro " + idObjeto +" en la posicion x="+ objectTuio.getX()+ " y=" + objectTuio.getY());
+
+  // ¡¡Si desea conocer la lista de los fiduciales asignados favor de abrir archivo adjunto "Piezas.txt"!!
+  // Asignacion de fiduciales a las piezas
+  if(objectTuio.getSymbolID() ==0){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Rey_N.setPosicion_x(x);
+    Rey_N.setPosicion_y(y);
+  }
+
+  if(objectTuio.getSymbolID() ==1){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Reyna_N.setPosicion_x(x);
+    Reyna_N.setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==2){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Alfiles_N[0].setPosicion_x(x);
+    Alfiles_N[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==3){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Alfiles_N[1].setPosicion_x(x);
+    Alfiles_N[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==4){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Caballos_N[0].setPosicion_x(x);
+    Caballos_N[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==5){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Caballos_N[1].setPosicion_x(x);
+    Caballos_N[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==6){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Torres_N[0].setPosicion_x(x);
+    Torres_N[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==7){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Torres_N[1].setPosicion_x(x);
+    Torres_N[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==8){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[0].setPosicion_x(x);
+    Peones_N[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==9){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[1].setPosicion_x(x);
+    Peones_N[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==10){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[2].setPosicion_x(x);
+    Peones_N[2].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==11){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[3].setPosicion_x(x);
+    Peones_N[3].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==12){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[4].setPosicion_x(x);
+    Peones_N[4].setPosicion_y(y);
+  if(objectTuio.getSymbolID() ==13){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[5].setPosicion_x(x);
+    Peones_N[5].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==14){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[6].setPosicion_x(x);
+    Peones_N[6].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==15){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[7].setPosicion_x(x);
+    Peones_N[7].setPosicion_y(y);
+  }
   
+  if(objectTuio.getSymbolID() ==16){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Rey_B.setPosicion_x(x);
+    Rey_B.setPosicion_y(y);
+  }
+
+  if(objectTuio.getSymbolID() ==17){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Reyna_B.setPosicion_x(x);
+    Reyna_B.setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==18){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Alfiles_B[0].setPosicion_x(x);
+    Alfiles_B[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==19){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Alfiles_B[1].setPosicion_x(x);
+    Alfiles_B[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==20){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Caballos_B[0].setPosicion_x(x);
+    Caballos_B[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==21){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Caballos_B[1].setPosicion_x(x);
+    Caballos_B[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==22){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Torres_B[0].setPosicion_x(x);
+    Torres_B[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==23){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Torres_B[1].setPosicion_x(x);
+    Torres_B[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==24){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[0].setPosicion_x(x);
+    Peones_B[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==25){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[1].setPosicion_x(x);
+    Peones_B[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==26){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[2].setPosicion_x(x);
+    Peones_B[2].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==27){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[3].setPosicion_x(x);
+    Peones_B[3].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==28){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[4].setPosicion_x(x);
+    Peones_B[4].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==29){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[5].setPosicion_x(x);
+    Peones_B[5].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==30){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[6].setPosicion_x(x);
+    Peones_B[6].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==31){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[7].setPosicion_x(x);
+    Peones_B[7].setPosicion_y(y);
+  }
+}
 }
 
 void updateTuioObject(TuioObject objectTuio){
   int idObjeto = objectTuio.getSymbolID();
-  
-  //Declaramos piezas negras
-  //peones
-  int peon_Nx1 = Peones_N[0].getPosicion_x();
-  int peon_Ny1 = Peones_N[0].getPosicion_y();
-  int peon_Nx2 = Peones_N[1].getPosicion_x();
-  int peon_Ny2 = Peones_N[1].getPosicion_y();
-  int peon_Nx3 = Peones_N[2].getPosicion_x();
-  int peon_Ny3 = Peones_N[2].getPosicion_y();
-  int peon_Nx4 = Peones_N[3].getPosicion_x();
-  int peon_Ny4 = Peones_N[3].getPosicion_y();
-  int peon_Nx5 = Peones_N[4].getPosicion_x();
-  int peon_Ny5 = Peones_N[4].getPosicion_y();
-  int peon_Nx6 = Peones_N[5].getPosicion_x();
-  int peon_Ny6 = Peones_N[5].getPosicion_y();
-  int peon_Nx7 = Peones_N[6].getPosicion_x();
-  int peon_Ny7 = Peones_N[6].getPosicion_y();
-  int peon_Nx8 = Peones_N[7].getPosicion_x();
-  int peon_Ny8 = Peones_N[7].getPosicion_y();
-  //torres
-  int torre_Nx1 = Torres_N[0].getPosicion_x();
-  int torre_Ny1 = Torres_N[0].getPosicion_y();
-  int torre_Nx2 = Torres_N[1].getPosicion_x();
-  int torre_Ny2 = Torres_N[1].getPosicion_y();
-  //caballos
-  int caballo_Nx1 = Caballos_N[0].getPosicion_x();
-  int caballo_Ny1 = Caballos_N[0].getPosicion_y();
-  int caballo_Nx2 = Caballos_N[1].getPosicion_x();
-  int caballo_Ny2 = Caballos_N[1].getPosicion_y();
-  //alfiles
-  int alfil_Nx1 = Alfiles_N[0].getPosicion_x();
-  int alfil_Ny1 = Alfiles_N[0].getPosicion_y();
-  int alfil_Nx2 = Alfiles_N[1].getPosicion_x();
-  int alfil_Ny2 = Alfiles_N[1].getPosicion_y();
-  //reyna
-  int reyna_Nx = Reyna_N.getPosicion_x();
-  int reyna_Ny = Reyna_N.getPosicion_y();
-  //rey
-  int rey_Nx = Rey_N.getPosicion_x();
-  int rey_Ny = Rey_N.getPosicion_x();
-  
-  //Declaramos piezas blancas
-  //peones
-  int peon_Bx1 = Peones_B[0].getPosicion_x();
-  int peon_By1 = Peones_B[0].getPosicion_y();
-  int peon_Bx2 = Peones_B[1].getPosicion_x();
-  int peon_By2 = Peones_B[1].getPosicion_y();
-  int peon_Bx3 = Peones_B[2].getPosicion_x();
-  int peon_By3 = Peones_B[2].getPosicion_y();
-  int peon_Bx4 = Peones_B[3].getPosicion_x();
-  int peon_By4 = Peones_B[3].getPosicion_y();
-  int peon_Bx5 = Peones_B[4].getPosicion_x();
-  int peon_By5 = Peones_B[4].getPosicion_y();
-  int peon_Bx6 = Peones_B[5].getPosicion_x();
-  int peon_By6 = Peones_B[5].getPosicion_y();
-  int peon_Bx7 = Peones_B[6].getPosicion_x();
-  int peon_By7 = Peones_B[6].getPosicion_y();
-  int peon_Bx8 = Peones_B[7].getPosicion_x();
-  int peon_By8 = Peones_B[7].getPosicion_y();
-  //torres
-  int torre_Bx1 = Torres_B[0].getPosicion_x();
-  int torre_By1 = Torres_B[0].getPosicion_y();
-  int torre_Bx2 = Torres_B[1].getPosicion_x();
-  int torre_By2 = Torres_B[1].getPosicion_y();
-  //caballos
-  int caballo_Bx1 = Caballos_B[0].getPosicion_x();
-  int caballo_By1 = Caballos_B[0].getPosicion_y();
-  int caballo_Bx2 = Caballos_B[1].getPosicion_x();
-  int caballo_By2 = Caballos_B[1].getPosicion_y();
-  //alfiles
-  int alfil_Bx1 = Alfiles_B[0].getPosicion_x();
-  int alfil_By1 = Alfiles_B[0].getPosicion_y();
-  int alfil_Bx2 = Alfiles_B[1].getPosicion_x();
-  int alfil_By2 = Alfiles_B[1].getPosicion_y();
-  //reyna
-  int reyna_Bx = Reyna_B.getPosicion_x();
-  int reyna_By = Reyna_B.getPosicion_y();
-  //rey
-  int rey_Bx = Rey_B.getPosicion_x();
-  int rey_By = Rey_B.getPosicion_x();
-    
   // ¡¡Si desea conocer la lista de los fiduciales asignados favor de abrir archivo adjunto "Piezas.txt"!!
-  
   // Asignacion de fiduciales a las piezas
   if(objectTuio.getSymbolID() ==0){
-    rey_Nx = round (objectTuio.getX()*width);
-    rey_Ny = round (objectTuio.getY()*width);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Rey_N.setPosicion_x(x);
+    Rey_N.setPosicion_y(y);
+    cF = BuscarCuadrante(Rey_N);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Rey_N.setCuadrante(cF);
   }
+
   if(objectTuio.getSymbolID() ==1){
-    reyna_Nx = round (objectTuio.getX()*width);
-    reyna_Ny = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Reyna_N.setPosicion_x(x);
+    Reyna_N.setPosicion_y(y);
+    cF = BuscarCuadrante(Reyna_N);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Reyna_N.setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==2){
-    alfil_Nx1 = round (objectTuio.getX()*width);
-    alfil_Ny1 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Alfiles_N[0].setPosicion_x(x);
+    Alfiles_N[0].setPosicion_y(y);
+    cF = BuscarCuadrante(Alfiles_N[0]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Alfiles_N[0].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==3){
-    alfil_Nx2 = round (objectTuio.getX()*width);
-    alfil_Ny2 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Alfiles_N[1].setPosicion_x(x);
+    Alfiles_N[1].setPosicion_y(y);
+    cF = BuscarCuadrante(Alfiles_N[1]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Alfiles_N[1].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==4){
-    caballo_Nx1 = round (objectTuio.getX()*width);
-    caballo_Ny1 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Caballos_N[0].setPosicion_x(x);
+    Caballos_N[0].setPosicion_y(y);
+    cF = BuscarCuadrante(Caballos_N[0]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Caballos_N[0].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==5){
-    caballo_Nx2 = round (objectTuio.getX()*width);
-    caballo_Ny2 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Caballos_N[1].setPosicion_x(x);
+    Caballos_N[1].setPosicion_y(y);
+    cF = BuscarCuadrante(Caballos_N[1]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Caballos_N[1].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==6){
-    torre_Nx1 = round (objectTuio.getX()*width);
-    torre_Ny1 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Torres_N[0].setPosicion_x(x);
+    Torres_N[0].setPosicion_y(y);
+    cF = BuscarCuadrante(Torres_N[0]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Torres_N[0].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==7){
-    torre_Nx2 = round (objectTuio.getX()*width);
-    torre_Ny2 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Torres_N[1].setPosicion_x(x);
+    Torres_N[1].setPosicion_y(y);
+    cF = BuscarCuadrante(Torres_N[1]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Torres_N[1].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==8){
-    peon_Nx1 = round (objectTuio.getX()*width);
-    peon_Ny1 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[0].setPosicion_x(x);
+    Peones_N[0].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_N[0]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_N[0].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==9){
-    peon_Nx2 = round (objectTuio.getX()*width);
-    peon_Ny2 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[1].setPosicion_x(x);
+    Peones_N[1].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_N[1]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_N[1].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==10){
-    peon_Nx3 = round (objectTuio.getX()*width);
-    peon_Ny3 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[2].setPosicion_x(x);
+    Peones_N[2].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_N[2]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_N[2].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==11){
-    peon_Nx4 = round (objectTuio.getX()*width);
-    peon_Ny4 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[3].setPosicion_x(x);
+    Peones_N[3].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_N[3]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_N[3].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==12){
-    peon_Nx5 = round (objectTuio.getX()*width);
-    peon_Ny5 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[4].setPosicion_x(x);
+    Peones_N[4].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_N[4]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_N[4].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==13){
-    peon_Nx6 = round (objectTuio.getX()*width);
-    peon_Ny6 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[5].setPosicion_x(x);
+    Peones_N[5].setPosicion_y(y);;
+    cF = BuscarCuadrante(Peones_N[5]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_N[5].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==14){
-    peon_Nx7 = round (objectTuio.getX()*width);
-    peon_Ny7 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[6].setPosicion_x(x);
+    Peones_N[6].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_N[6]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_N[6].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==15){
-    peon_Nx8 = round (objectTuio.getX()*width);
-    peon_Ny8 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_N[7].setPosicion_x(x);
+    Peones_N[7].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_N[7]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_N[7].setCuadrante(cF);
   }
   
-  if(objectTuio.getSymbolID() == 16){
-    rey_Bx = round (objectTuio.getX()*width);
-    rey_By = round (objectTuio.getY()*height);
+  if(objectTuio.getSymbolID() ==16){
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Rey_B.setPosicion_x(x);
+    Rey_B.setPosicion_y(y);
+    cF = BuscarCuadrante(Rey_B);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Rey_B.setCuadrante(cF);
   }
+
   if(objectTuio.getSymbolID() ==17){
-    reyna_Bx = round (objectTuio.getX()*width);
-    reyna_By = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Reyna_B.setPosicion_x(x);
+    Reyna_B.setPosicion_y(y);
+    cF = BuscarCuadrante(Reyna_B);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Reyna_B.setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==18){
-    alfil_Bx1 = round (objectTuio.getX()*width);
-    alfil_By1 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Alfiles_B[0].setPosicion_x(x);
+    Alfiles_B[0].setPosicion_y(y);
+    cF = BuscarCuadrante(Alfiles_B[0]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Alfiles_B[0].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==19){
-    alfil_Bx2 = round (objectTuio.getX()*width);
-    alfil_By2 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Alfiles_B[1].setPosicion_x(x);
+    Alfiles_B[1].setPosicion_y(y);
+    cF = BuscarCuadrante(Alfiles_B[1]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Alfiles_B[1].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==20){
-    caballo_Bx1 = round (objectTuio.getX()*width);
-    caballo_By1 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Caballos_B[0].setPosicion_x(x);
+    Caballos_B[0].setPosicion_y(y);
+    cF = BuscarCuadrante(Caballos_B[0]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Caballos_B[0].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==21){
-    caballo_Bx2 = round (objectTuio.getX()*width);
-    caballo_By2 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Caballos_B[1].setPosicion_x(x);
+    Caballos_B[1].setPosicion_y(y);
+    cF = BuscarCuadrante(Caballos_B[1]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Caballos_B[1].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==22){
-    torre_Bx1 = round (objectTuio.getX()*width);
-    torre_By1 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Torres_B[0].setPosicion_x(x);
+    Torres_B[0].setPosicion_y(y);
+    cF = BuscarCuadrante(Torres_B[0]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Torres_B[0].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==23){
-    torre_Bx2 = round (objectTuio.getX()*width);
-    torre_By2 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Torres_B[1].setPosicion_x(x);
+    Torres_B[1].setPosicion_y(y);;
+    cF = BuscarCuadrante(Torres_B[1]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Torres_B[1].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==24){
-    peon_Bx1 = round (objectTuio.getX()*width);
-    peon_By1 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[0].setPosicion_x(x);
+    Peones_B[0].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_B[0]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_B[0].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==25){
-    peon_Bx2 = round (objectTuio.getX()*width);
-    peon_By2 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[1].setPosicion_x(x);
+    Peones_B[1].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_B[1]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_B[1].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==26){
-    peon_Bx3 = round (objectTuio.getX()*width);
-    peon_By3 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[2].setPosicion_x(x);
+    Peones_B[2].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_B[2]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_B[2].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==27){
-    peon_Bx4 = round (objectTuio.getX()*width);
-    peon_By4 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[3].setPosicion_x(x);
+    Peones_B[3].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_B[3]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_B[3].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==28){
-    peon_Bx5 = round (objectTuio.getX()*width);
-    peon_By5 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[4].setPosicion_x(x);
+    Peones_B[4].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_B[4]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_B[4].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==29){
-    peon_Bx6 = round (objectTuio.getX()*width);
-    peon_By6 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[5].setPosicion_x(x);
+    Peones_B[5].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_B[5]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_B[5].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==30){
-    peon_Bx7 = round (objectTuio.getX()*width);
-    peon_By7 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[6].setPosicion_x(x);
+    Peones_B[6].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_B[6]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_B[6].setCuadrante(cF);
   }
   if(objectTuio.getSymbolID() ==31){
-    peon_Bx8 = round (objectTuio.getX()*width);
-    peon_By8 = round (objectTuio.getY()*height);
+    x = round (objectTuio.getX()*width);
+    y = round (objectTuio.getY()*height);
+    Peones_B[7].setPosicion_x(x);
+    Peones_B[7].setPosicion_y(y);
+    cF = BuscarCuadrante(Peones_B[7]);
+    P = leerFiducial(idObjeto);
+    L = cF.getLetra();
+    N = cF.getNumero();
+    Peones_B[7].setCuadrante(cF);
   }
-  
+  E = "";
 }
 
 void removeTuioObject(TuioObject objectTuio){
-  println("Salio: " + objectTuio.getSymbolID());
+  int idObjeto = objectTuio.getSymbolID();
+  x = 0;
+  y = 0;
+  E = "x";
+  // ¡¡Si desea conocer la lista de los fiduciales asignados favor de abrir archivo adjunto "Piezas.txt"!!
+  // Asignacion de fiduciales a las piezas
+  if(objectTuio.getSymbolID() ==0){
+    Rey_N.setPosicion_x(x);
+    Rey_N.setPosicion_y(y);
+  }
+
+  if(objectTuio.getSymbolID() ==1){
+    Reyna_N.setPosicion_x(x);
+    Reyna_N.setPosicion_y(y);    
+  }
+  if(objectTuio.getSymbolID() ==2){
+    Alfiles_N[0].setPosicion_x(x);
+    Alfiles_N[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==3){
+    Alfiles_N[1].setPosicion_x(x);
+    Alfiles_N[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==4){
+    Caballos_N[0].setPosicion_x(x);
+    Caballos_N[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==5){
+    Caballos_N[1].setPosicion_x(x);
+    Caballos_N[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==6){
+    Torres_N[0].setPosicion_x(x);
+    Torres_N[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==7){
+    Torres_N[1].setPosicion_x(x);
+    Torres_N[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==8){
+    Peones_N[0].setPosicion_x(x);
+    Peones_N[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==9){
+    Peones_N[1].setPosicion_x(x);
+    Peones_N[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==10){
+    Peones_N[2].setPosicion_x(x);
+    Peones_N[2].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==11){
+    Peones_N[3].setPosicion_x(x);
+    Peones_N[3].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==12){
+    Peones_N[4].setPosicion_x(x);
+    Peones_N[4].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==13){
+    Peones_N[5].setPosicion_x(x);
+    Peones_N[5].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==14){
+    Peones_N[6].setPosicion_x(x);
+    Peones_N[6].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==15){
+    Peones_N[7].setPosicion_x(x);
+    Peones_N[7].setPosicion_y(y);
+  }
+  
+  if(objectTuio.getSymbolID() ==16){
+    Rey_B.setPosicion_x(x);
+    Rey_B.setPosicion_y(y);
+  }
+
+  if(objectTuio.getSymbolID() ==17){
+    Reyna_B.setPosicion_x(x);
+    Reyna_B.setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==18){
+    Alfiles_B[0].setPosicion_x(x);
+    Alfiles_B[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==19){
+    Alfiles_B[1].setPosicion_x(x);
+    Alfiles_B[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==20){
+    Caballos_B[0].setPosicion_x(x);
+    Caballos_B[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==21){
+    Caballos_B[1].setPosicion_x(x);
+    Caballos_B[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==22){
+    Torres_B[0].setPosicion_x(x);
+    Torres_B[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==23){
+    Torres_B[1].setPosicion_x(x);
+    Torres_B[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==24){
+    Peones_B[0].setPosicion_x(x);
+    Peones_B[0].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==25){
+    Peones_B[1].setPosicion_x(x);
+    Peones_B[1].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==26){
+    Peones_B[2].setPosicion_x(x);
+    Peones_B[2].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==27){
+    Peones_B[3].setPosicion_x(x);
+    Peones_B[3].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==28){
+    Peones_B[4].setPosicion_x(x);
+    Peones_B[4].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==29){
+    Peones_B[5].setPosicion_x(x);
+    Peones_B[5].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==30){
+    Peones_B[6].setPosicion_x(x);
+    Peones_B[6].setPosicion_y(y);
+  }
+  if(objectTuio.getSymbolID() ==31){
+    Peones_B[7].setPosicion_x(x);
+    Peones_B[7].setPosicion_y(y);
+  }
 }

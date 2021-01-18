@@ -4,19 +4,16 @@ public class Pieza {
     public int posicion_x;
     public int posicion_y;
     
-    public int nuevaX = 0;
-    public int nuevaY = 0;
+    public Cuadrante cuadrante;
 
     public Pieza() {
     }
     
-    public Pieza(String nombre, PImage imagen,int posicion_x, int posicion_y, int nuevaX, int nuevaY) {
+    public Pieza(String nombre, PImage imagen,int posicion_x, int posicion_y) {
         this.nombre = nombre;
         this.imagen = imagen;
         this.posicion_x = posicion_x;
         this.posicion_y = posicion_y;
-        this.nuevaX = nuevaX;
-        this.nuevaY = nuevaY;
     }
 
     public String getNombre() {
@@ -51,19 +48,12 @@ public class Pieza {
         this.posicion_y = posicion_y;
     }
 
-    public int getNuevaX() {
-        return nuevaX;
+    public Cuadrante getCuadrante() {
+        return cuadrante;
     }
 
-    public void setNuevaX(int nuevaX) {
-        this.nuevaX = nuevaX;
+    public void setCuadrante(Cuadrante cuadrante) {
+        this.cuadrante = cuadrante;
     }
 
-    public int getNuevaY() {
-        return nuevaY;
-    }
-
-    public void setNuevaY(int nuevaY) {
-        this.nuevaY = nuevaY;
-    }
 }
