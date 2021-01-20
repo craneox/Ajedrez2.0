@@ -1,4 +1,4 @@
-import TUIO.*;
+ import TUIO.*;
 
 TuioProcessing tuio;
 
@@ -29,11 +29,10 @@ Pieza Rey_B;
   Cuadrante cI;
   Cuadrante cF;
   
-  String Movimiento_N[] = new String[1000];
-  String Movimiento_B[] = new String[1000];
+  String Movimiento_N[] = new String[200];
+  String Movimiento_B[] = new String[200];
   int coN = 0;
   int coB = 0;
-  int q = 0;
   
   String negro;
   String blanco;
@@ -41,8 +40,9 @@ Pieza Rey_B;
   String P;
   String L;
   String N;
-  String E;
-
+  String E = "";
+  
+  boolean ventana = true;
 
 void setup(){
   size(708, 704);
@@ -57,43 +57,39 @@ void setup(){
 }
 
 void draw(){
-  background(fondo);
+  if(ventana){
+    background(fondo);
+    cargarPiezas();
+  }else{
+    background(00);
+    imprimir_Movimientos();
+  }
   
-  cargarPiezas();
+  
   
   if(keyPressed){
     if(key == 'r'){
-      acomodarTablero();
-      P = null;
-      L = null;
-      N = null;
-      E = null;
+      println("reiniciando");
+      reiniciar();
+      ventana = true;
     }
     if (key == CODED){
       //Movimientos Blancos
       if(keyCode == LEFT){
-        if(P != null){
-          blanco = P+E+L+N;
-          if(Movimiento_N[0] == null){
-            Movimiento_N[0] = blanco;
-            P = null;
-            println("Se agrego a la primera posicion: "+ blanco);
-          }else{
-            println("Comparamos: " + blanco +" == "+ Movimiento_N[coN]);
-            if(blanco == Movimiento_N[coN]){
-              println("Son iguales");
-              P = null;
-            }else{
-              Movimiento_N[coN+1] = blanco;
-              coN = coN +1;
-              println("Se agrego en la posicion " + coN +": "+ blanco);
-              P = null;
-            }
-          }
+        Movimiento_Blanco();
       }
-    }
       //Movimientos Negros
-      
+      if(keyCode == RIGHT){
+        Movimiento_Negro();
+      }
+      if(keyCode == UP){
+        println("Mostrando resultados");
+        ventana = false;
+      }
+      if(keyCode == DOWN){
+        println("Mostrando juego");
+        ventana = true;
+      }
     }
   } 
 }
@@ -228,6 +224,113 @@ void cargarPiezas(){
     image(Rey_B.getImagen(), Rey_B.getPosicion_x()-40, Rey_B.getPosicion_y()-40, 80,80);
     }
 }
+void reiniciar(){
+  acomodarTablero();
+  P = null;
+  L = null;
+  N = null;
+  E = "";
+  for(int i=0;i<200;i++){
+    Movimiento_N[i]=null;
+    Movimiento_B[i]=null;
+  }
+}
+
+void Movimiento_Blanco(){
+  if(P != null){
+    blanco = P+E+L+N;
+    if(Movimiento_B[0] == null){
+      Movimiento_B[0] = blanco;
+      println("Se agrego a la primera posicion blanca: "+ blanco);
+    }else{
+      boolean bandera = false;
+      if(Movimiento_B[coB].equals(blanco)){
+        bandera = true; 
+      }
+      if(bandera){
+        bandera = false;
+      }else{
+        coB = coB +1;
+        Movimiento_B[coB] = blanco;
+        println("Se agrego " + blanco +" a la posicion "+ coB);
+        bandera = false;
+        E="";
+      }
+    }
+  }
+  P = null;
+}
+
+void Movimiento_Negro(){
+  if(P != null){
+    negro = P+E+L+N;
+    if(Movimiento_N[0] == null){
+      Movimiento_N[0] = negro;
+      println("Se agrego a la primera posicion negra: "+ negro);
+    }else{
+      boolean bandera = false;
+      if(Movimiento_N[coN].equals(negro)){
+        bandera = true; 
+      }
+      if(!bandera){
+        coN = coN +1;
+        Movimiento_N[coN] = negro;
+        println("Se agrego " + negro +" a la posicion "+ coN);
+        bandera = false;
+        E="";
+      }else{
+        bandera = false;
+      }
+    }
+  }
+  P = null;
+}
+
+void imprimir_Movimientos(){
+  textSize(32);
+  text("Movimientos de la partida", 140, 60);
+  fill(200, 200, 200);
+  textSize(18);
+  text("Blancos",40,110);
+  text("Negros",180,110);
+  text("Blancos",380,110);
+  text("Negros",520,110);
+  
+  textSize(14);
+  int j = 1;
+  int mBx = 30;
+  int mBy = 140;
+  int mNx = 170;
+  int mNy = 140;
+  
+  for(int i=0; i<79;i++){
+    if(Movimiento_B[i] == null){
+      i=78;
+    }else{
+      if(mBy<680 || mNy<680){
+        text(j+"  "+Movimiento_B[i],mBx,mBy);
+        mBy = mBy + 14;
+        j++;
+      }else{
+        mBx = 370;
+        mBy = 140;
+      }
+    }
+    if(Movimiento_N[i] == null){
+      i=78;
+    }else{
+      if(mBy<680 || mNy<680){
+        text(j+"  "+Movimiento_N[i],mNx,mNy);
+        mNy = mNy + 14;
+        j++;
+      }else{
+        mNx = 510;
+        mNy = 140;
+      }
+    }
+  } 
+}
+
 /////////////////////////////////////
 
 Cuadrante BuscarCuadrante(Pieza pieza){
@@ -327,7 +430,6 @@ String leerFiducial(int f){
 
 void addTuioObject(TuioObject objectTuio){
   int idObjeto = objectTuio.getSymbolID();
-
   // ¡¡Si desea conocer la lista de los fiduciales asignados favor de abrir archivo adjunto "Piezas.txt"!!
   // Asignacion de fiduciales a las piezas
   if(objectTuio.getSymbolID() ==0){
@@ -408,6 +510,7 @@ void addTuioObject(TuioObject objectTuio){
     y = round (objectTuio.getY()*height);
     Peones_N[4].setPosicion_x(x);
     Peones_N[4].setPosicion_y(y);
+  }
   if(objectTuio.getSymbolID() ==13){
     x = round (objectTuio.getX()*width);
     y = round (objectTuio.getY()*height);
@@ -524,7 +627,6 @@ void addTuioObject(TuioObject objectTuio){
     Peones_B[7].setPosicion_x(x);
     Peones_B[7].setPosicion_y(y);
   }
-}
 }
 
 void updateTuioObject(TuioObject objectTuio){
@@ -886,7 +988,6 @@ void updateTuioObject(TuioObject objectTuio){
     N = cF.getNumero();
     Peones_B[7].setCuadrante(cF);
   }
-  E = "";
 }
 
 void removeTuioObject(TuioObject objectTuio){
