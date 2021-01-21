@@ -234,6 +234,8 @@ void reiniciar(){
     Movimiento_N[i]=null;
     Movimiento_B[i]=null;
   }
+  coB = 0;
+  coN = 0;
 }
 
 void Movimiento_Blanco(){
@@ -430,6 +432,7 @@ String leerFiducial(int f){
 
 void addTuioObject(TuioObject objectTuio){
   int idObjeto = objectTuio.getSymbolID();
+  E="";
   // ¡¡Si desea conocer la lista de los fiduciales asignados favor de abrir archivo adjunto "Piezas.txt"!!
   // Asignacion de fiduciales a las piezas
   if(objectTuio.getSymbolID() ==0){
